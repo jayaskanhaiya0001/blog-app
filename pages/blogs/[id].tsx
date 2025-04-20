@@ -4,6 +4,7 @@ import axios from 'axios';
 import Layout from '@/components/Layout';
 import CommentForm from '@/components/CommentForm';
 import { getSession } from 'next-auth/react';
+import { useEffect } from 'react';
 
 
 
@@ -32,6 +33,7 @@ const BlogPage: NextPage<BlogPageProps> = ({ id, token }) => {
         });
         return data;
     });
+
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading blog post</div>;

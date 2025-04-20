@@ -2,13 +2,27 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import connectDB from '@/lib/db';
 import { Comment } from '@/lib/models/Comment';
 
-export default async function handler(
+
+const allowCors = (fn: Function) => async (req: NextApiRequest, res: NextApiResponse) => {
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  return await fn(req, res);
+};
+
+ async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   await connectDB();
   const { blogId } = req.query;
-  console.log('API endpoint hit', req.url, req.method, req.query);
+  console.log(req.method , 'Check Method Hain')
   if (req.method === 'GET') {
     try {
       const page = parseInt(req.query.page as string) || 1;
@@ -40,3 +54,5 @@ export default async function handler(
 
   return res.status(405).json({ message: 'Method not allowed' });
 }
+
+export default allowCors(handler);
